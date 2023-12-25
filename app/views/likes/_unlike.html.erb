@@ -1,0 +1,40 @@
+<i class="fa-solid fa-thumbs-up fa-2xl" style="color: #0c6efd;" id="unlike<%=my_post.id%>"></i>
+<script>
+
+  document.getElementById("unlike<%=my_post.id%>").addEventListener('click',()=>{
+      if(document.getElementById("unlike<%=my_post.id%>").classList.contains('fa-regular'))
+      {
+        var token = document.getElementsByName('csrf-token')[0].content
+         console.log("/posts/"+<%=my_post.id%>+"/likes/new")
+          $.ajax({
+            url: "/posts/"+<%=my_post.id%>+"/likes/like",
+            method: 'POST',
+            data: {post_id: <%=my_post.id%>},
+            headers: {
+                    'X-CSRF-Token': token,
+                  },
+            success: function(data){
+            $("#unlike<%=my_post.id%>").removeClass('fa-regular')
+            $("#unlike<%=my_post.id%>").addClass('fa-solid')
+            }
+            })
+     }
+     else
+     {
+          var token = document.getElementsByName('csrf-token')[0].content
+         console.log("/posts/"+<%=my_post.id%>+"/likes/un_like")
+          $.ajax({
+            url: "/posts/"+<%=my_post.id%>+"/likes/un_like",
+            method: 'POST',
+            data: {id: <%=my_post.id%>},
+            headers: {
+                    'X-CSRF-Token': token,
+                  },
+            success: function(data){
+            $("#unlike<%=my_post.id%>").removeClass('fa-solid')
+            $("#unlike<%=my_post.id%>").addClass('fa-regular')
+            }
+          })
+     }
+     })
+</script>

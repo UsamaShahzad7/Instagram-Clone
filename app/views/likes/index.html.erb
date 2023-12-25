@@ -1,0 +1,18 @@
+<%=turbo_frame_tag "likes" do%>
+  <div class="likes">
+    <h3>Likes</h3>
+    <%@likes.each do |like|%>
+      <div>
+        <%=like.email%>
+        <%user_name=Profile.where(email:like.email).pluck(:user_name)%>
+        <%=user_name%>
+      </div>
+    <%end%>
+    <div>
+       <%=link_to "Close","#",data:{
+      controller: "likes-modal",
+      action: "likes-modal#close"
+    },class:"btn btn-secondary"%>
+    </div>
+  </div>
+<%end%>

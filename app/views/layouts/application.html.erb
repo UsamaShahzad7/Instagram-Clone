@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>InstagramClone</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <script src="https://code.jquery.com/jquery-3.7.0.js" integrity="sha256-JlqSTELeR4TLqP0OG9dxM7yDPqX1ox/HfgiSLBj8+kM=" crossorigin="anonymous"></script>
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag "profile_popup", "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+    <script src="https://kit.fontawesome.com/bdddbb1ad0.js" crossorigin="anonymous"></script>
+  </head>
+
+  <body>
+    <div class="main">
+      <div class="container">
+        <nav class="navbar navbar-light bg-white navbar-fixed-top">
+          <a class="navbar-brand navbar-link" href="/">
+            <img src="https://www.freepnglogos.com/uploads/logo-ig-png/logo-ig-instagram-new-logo-vector-download-13.png" width="30" height="30" class="d-inline-block align-top" alt="">
+              INSTAGRAM
+          </a>
+           <div class="d-flex justify-content-center" id="searchBar">
+              <form action="/profiles/search" method="post" id="searchForm">
+                <input type="text" name="searchQuery" id="searchQuery" class="form-control" placeholder="Search Here">
+              </form>
+          </div>
+
+
+           <a class="navbar-brand" id="profileBtn">
+            <%if @current_profile_picture%>
+              <%=image_tag @current_profile_picture.profile_picture.representation(resize_to_limit: [250, 250]),class: "d-inline-block align-top navImage" ,id:"navImageBtn"%>
+            <%end%>
+          </a>
+        </nav>
+        <div id="profile_popup">
+          <%=render partial:"shared/profile_popup", locals:{current_profile_picture: @current_profile_picture ,current_profile: @current_profile,current_account:@current_account}%>
+        </div>
+      </div>
+    </div>
+    <%=turbo_frame_tag "modal"%>
+    <%=turbo_frame_tag "comment"%>
+    <%=turbo_frame_tag "likes"%>
+    <%=turbo_frame_tag "postComments"%>
+    <%=turbo_frame_tag "editModal"%>
+    <%= yield %>
+  </body>
+</html>
+<script>
+  //for search by pressing enter
+  $('#searchForm').keydown(function(event) {
+  if (event.keyCode == 13) {
+    event.preventDefault();
+    $('#searchForm').submit();
+  }
+  });
+
+  //for opening a popup from profile icon
+  var profile_popup=document.getElementById("profile_popup")
+  profile_popup.hidden=true
+  document.getElementById("profileBtn").addEventListener('click',()=>{
+      console.log("Hello")
+      profile_popup.hidden=false
+  })
+
+  //skip this event for certain targets
+  window.onclick = function(event) {
+          if (event.target.id != "profile_popup" && event.target.id != "profileBtn" && event.target.id != "navImageBtn" && event.target.id!="profileImage" &&
+          event.target.id != "exampleModal" && event.target.id != "oneImg" && event.target.id != "editBtn"
+          && event.target.id != "switchBtn" && event.target.id != "checkBoxBtn" && event.target.id != "oneVideo"
+          && event.target.id != "sliderBtn") {
+                console.log(event)
+                profile_popup.hidden= true
+                myModal.hidden= true
+          }
+        }
+
+    //for changing status
+    var checkBox=document.getElementById("checkBoxBtn")
+    checkBox.addEventListener('click',function(){
+      let id=checkBox.dataset.profileid
+      if(checkBox.checked)
+      {
+        console.log("hi")
+        $.ajax({
+          url: '/profiles/status',
+          method: 'GET',
+          data: {profile_id: id},
+          success: function(data){
+            document.getElementById("status").innerHTML=data.status}
+        })
+      }
+      else
+    {
+        console.log("bye")
+        $.ajax({
+          url: '/profiles/status',
+          method: 'GET',
+          data: {profile_id: id},
+          success: function(data){
+            document.getElementById("status").innerHTML=data.status}
+        })
+      }
+    })
+</script>

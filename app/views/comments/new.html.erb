@@ -1,0 +1,21 @@
+<%=turbo_frame_tag "comment" do%>
+<div class="comment">
+  <h3>Create a Comment</h3>
+    <div>
+      <%=form_with model: [@post,@comment] do |form|%>
+      <%=hidden_field_tag :post_id,params[:post_id]%>
+      <%=form.label :comment%>
+      <%=form.text_field :comment ,class: 'form-control'%>
+      <div class="submit">
+        <%=form.submit id:"createCommentBtn" ,class: "btn btn-outline-success"%>
+      </div>
+      <%end%>
+    </div>
+    <div>
+       <%=link_to "Cancel","#",data:{
+      controller: "comment-modals",
+      action: "comment-modals#close"
+    },class:"btn btn-secondary"%>
+    </div>
+</div>
+<%end%>

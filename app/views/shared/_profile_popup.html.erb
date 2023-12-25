@@ -1,0 +1,42 @@
+<div class="main">
+  <div class="container myProfile">
+     <div class="card mb-3" style="border-radius: .5rem;">
+          <div class="row g-0">
+            <div class="col-md-4 gradient-custom text-center text-white"
+              style="border-top-left-radius: .5rem; border-bottom-left-radius: .5rem;">
+                <a href="/profiles/<%current_profile.id%>"><%=image_tag current_profile_picture.profile_picture.representation(resize_to_limit: [250, 250]), class:"img-fluid my-5", id:"profileImage"%></a>
+              <h5><%=current_profile.user_name%></h5>
+              <%=link_to '<i class="fa-solid fa-user-pen fa-xl" style="color: #ffffff;"></i>'.html_safe,edit_profile_path(current_profile.id)%>
+              <%=link_to '<i class="fa-solid fa-lock fa-xl" style="color: #ffffff;"></i>'.html_safe,accounts_after_confirmation_path(current_account)%>
+            </div>
+            <div class="col-md-8">
+              <div class="card-body p-4">
+                <h6>Information</h6>
+                <hr class="mt-0 mb-4">
+                <div class="row pt-1">
+                  <div class="col-12 mb-3">
+                    <h6>Email</h6>
+                    <p class="text-muted"><%=current_profile.email%></p>
+                  </div>
+                  <div class="col-8 mb-3">
+                    <h6>Status</h6>
+                    <p class="text-muted" id="status"><%=current_profile.status%></p>
+                  </div>
+                  <h6>Change Status</h6>
+                 <hr class="mt-0 mb-4">
+                 <div class="col-1 mb-3">
+                     <label class="switch" id="switchBtn">
+                      <input type="checkbox" id="checkBoxBtn" data-profileId='<%=current_profile.id%>'>
+                      <span class="slider round" id="sliderBtn"></span>
+                    </label>
+                  </div>
+                  <div class="col-1 mb-3">
+                     <%= link_to "Sign Out",destroy_account_session_path(),data:{turbo_method: :delete},class:"btn btn-danger",id:"signOut"%>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+  </div>
+</div>

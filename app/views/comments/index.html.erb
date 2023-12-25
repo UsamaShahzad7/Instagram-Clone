@@ -1,0 +1,16 @@
+<%=turbo_frame_tag "postComments" do%>
+  <div class="postComments">
+    <h3>Comments</h3>
+      <%@comment.each do |comment|%>
+        <div>
+          <%=comment.comment%>
+        </div>
+      <%end%>
+     <div>
+       <%=link_to "Close","#",data:{
+      controller: "post-comments",
+      action: "post-comments#close"
+    },class:"btn btn-secondary"%>
+    </div>
+  </div>
+<%end%>

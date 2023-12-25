@@ -1,0 +1,112 @@
+<div class="main">
+    <div class="container">
+        <%=link_to "Sign Out",destroy_account_session_path(),data:{turbo_method: :delete},class:"btn btn-outline-danger",id:"AdminSignOut"%>
+        <div class="row">
+            <div class="col lg-4">
+                  <h1>ADMIN PORTAL</h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col lg-4">
+                  <h1>Posts</h1>
+            </div>
+            <div class="col lg-4">
+                  <h1>Accounts</h1>
+            </div>
+        </div>
+         <div class="row">
+            <div class="col lg-4" >
+              <%@profiles.each do |profile|%>
+                      <%@posts.each do |post|%>
+                          <%if profile.posts.count>0 && post.profile_id==profile.id%>
+                              <div class="row">
+                                  <div id="eachPost">
+                                  <div class="col lg-2">
+                                    <%=image_tag profile.profile_picture.representation(resize_to_limit: [250, 250]),class: "post_img"%>
+                                  <%=link_to "#{profile.user_name}",profile_path(profile.id),class:"btn btn primary"%>
+                                  <%=post.caption%>
+                                    <%=post.location%>
+                                  <div class="eachImage">
+                                    <%if post.images.attached?%>
+                                                    <%if  post.images.first.content_type.include?("image")%>
+                                                    <%if post.images.count>1%>
+                                                        <div id="Carousel<%=post.id%>" class="carousel slide" data-bs-ride="carousel">
+                                                        <!-- Wrapper for slides -->
+                                                        <div class="carousel-inner">
+                                                          <% post.images.each_with_index do |image, index| %>
+                                                            <div class="carousel-item <%= 'active' if index == 0 %>">
+                                                              <%= image_tag image.representation(resize_to_limit: [600, 600]), id: "oneImg",:"data-postId" => post.id ,alt: "Slide #{index + 1}"%>
+                                                            </div>
+                                                          <% end %>
+                                                        </div>
+
+                                                        <!-- Left and right controls -->
+                                                      <button class="carousel-control-prev" type="button" data-bs-target="#Carousel<%=post.id%>" data-bs-slide="prev">
+                                                          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                                          <span class="visually-hidden">Previous</span>
+                                                        </button>
+                                                        <button class="carousel-control-next next" type="button" data-bs-target="#Carousel<%=post.id%>" data-bs-slide="next">
+                                                          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                                          <span class="visually-hidden">Next</span>
+                                                        </button>
+                                                      </div>
+                                                      <%else%>
+
+                                                    <div class="image-container">
+                                                      <% post.images.each do |image| %>
+                                                        <%= image_tag image.representation(resize_to_limit: [600, 600]), id: "oneImg", :"data-postId" => post.id %>
+                                                      <% end %>
+                                                    </div>
+
+                                                      <%end%>
+                                                    <% else %>
+                                                      <%=video_tag url_for(post.images.first),controls: true,width: "600",height: "auto",id:"oneVideo" ,:"data-postId"=>post.id%>
+                                                    <% end %>
+                                    <%end%>
+                                  </div>
+                                  </div>
+                                </div>
+                          </div>
+                          <% end %>
+                  <%end%>
+                <%end%>
+          </div>
+          <div class="col lg-4">
+                <%@accounts.each do |account|%>
+                  <div id="eachAccount">
+                    <%=account.email%>
+                    <%if account.status=="activated"%>
+                      <%=link_to "Deactivate",admins_admins_de_activate_path(account),data:{turbo_method: :post},class:"btn btn-danger"%>
+                    <%else%>
+                      <%=link_to "Activate",admins_admins_activate_path(account),data:{turbo_method: :post},class:"btn btn-success"%>
+                    <%end%>
+                  </div>
+                <%end%>
+          </div>
+         </div>
+    </div>
+</div>
+<style>
+  .main{
+    margin-top: 40px;
+  }
+  #AdminSignOut
+  {
+    float:right;
+  }
+   .post_img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 50%;
+    top:20px;
+  }
+   #eachPost
+  {
+    margin-bottom: 30px;
+  }
+   #eachAccount
+  {
+    margin-bottom: 30px;
+  }
+</style>

@@ -1,0 +1,38 @@
+<i class="fa-regular fa-thumbs-up fa-2xl" style="color: #0c6efd;" id="like<%=my_post.id%>"></i>
+<script>
+
+  document.getElementById("like<%=my_post.id%>").addEventListener('click',()=>{
+      if(document.getElementById("like<%=my_post.id%>").classList.contains('fa-regular'))
+      {
+          var token = document.getElementsByName('csrf-token')[0].content
+          $.ajax({
+            url: "/posts/"+<%=my_post.id%>+"/likes/like",
+            method: 'POST',
+            headers: {
+                    'X-CSRF-Token': token,
+                  },
+            data: {post_id: <%=my_post.id%>},
+            success: function(data){
+              $("#like<%=my_post.id%>").removeClass('fa-regular')
+              $("#like<%=my_post.id%>").addClass('fa-solid')
+            }
+            })
+     }
+     else
+     {
+          var token = document.getElementsByName('csrf-token')[0].content
+          $.ajax({
+            url: "/posts/"+<%=my_post.id%>+"/likes/un_like",
+            method: 'POST',
+            headers: {
+                    'X-CSRF-Token': token,
+                  },
+            data: {id: <%=my_post.id%>},
+            success: function(data){
+            $("#like<%=my_post.id%>").removeClass('fa-solid')
+            $("#like<%=my_post.id%>").addClass('fa-regular')
+            }
+          })
+     }
+     })
+</script>

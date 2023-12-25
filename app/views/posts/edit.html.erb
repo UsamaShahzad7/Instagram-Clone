@@ -1,0 +1,26 @@
+<%=turbo_frame_tag "editModal" do%>
+  <div class="editModal">
+    <div>
+       <h3>Edit Post</h3>
+      <%=form_with model: @post do |form|%>
+        <div class="field">
+           <%=form.label :caption%>
+           <%=form.text_field :caption ,class: 'form-control'%>
+        </div>
+        <div class="field">
+          <%=form.label :location%>
+           <%=form.text_field :location ,class: 'form-control'%>
+        </div>
+        <div class="submit">
+          <%=form.submit class:"btn btn-primary" %>
+        </div>
+      <%end%>
+    </div>
+    <div>
+       <%=link_to "Close","#",data:{
+      controller: "edit-modal",
+      action: "edit-modal#close"
+    },class:"btn btn-secondary"%>
+    </div>
+  </div>
+<%end%>

@@ -1,0 +1,185 @@
+<div class="main">
+  <div class="container">
+   <%=image_tag @profile.profile_picture.representation(resize_to_limit: [250, 250]),class: "post_img"%>
+    <h1><%=@profile.user_name%></h1>
+        <div id="info">
+          <%=link_to "Followers: #{@followers}",new_post_path,data:{turbo_frame: "modal"},class:"btn btn primary"%>
+          <%=link_to "Following: #{@following}",new_post_path,data:{turbo_frame: "modal"},class:"btn btn primary"%>
+          <%# <span>Posts: <span id="postCount"><%=@post_count</span> </span>%>
+          <%if @has_followed==1%>
+            <%=link_to "Unfollow",friendships_unfollow_profile_path(@profile.id),class:"btn btn-primary"%>
+          <% else %>
+            <%=link_to "Follow",friendships_follow_profile_path(@profile.id),class:"btn btn-primary"%>
+          <% end %>
+        </div>
+        <% if @profile.status=="public_profile" %>
+            <div class="row pb-2">
+                <%@posts.each do |post|%>
+                <div class="col lg-3">
+                  <div class="eachImage">
+                    <%if post.images.attached?%>
+                        <%if  post.images.first.content_type.include?("image")%>
+                        <%if post.images.count>1%>
+                            <div id="Carousel<%=post.id%>" class="carousel slide" data-bs-ride="carousel">
+                            <!-- Wrapper for slides -->
+                            <div class="carousel-inner">
+                              <% post.images.each_with_index do |image, index| %>
+                                <div class="carousel-item <%= 'active' if index == 0 %>">
+                                  <%= image_tag image.representation(resize_to_limit: [400, 400]), id: "oneImg",class:"img" ,:"data-postId" => post.id ,alt: "Slide #{index + 1}"%>
+                                </div>
+                              <% end %>
+                            </div>
+
+                            <!-- Left and right controls -->
+                          <button class="carousel-control-prev" type="button" data-bs-target="#Carousel<%=post.id%>" data-bs-slide="prev">
+                              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                              <span class="visually-hidden">Previous</span>
+                            </button>
+                            <button class="carousel-control-next next" type="button" data-bs-target="#Carousel<%=post.id%>" data-bs-slide="next">
+                              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                              <span class="visually-hidden">Next</span>
+                            </button>
+                          </div>
+                          <%else%>
+
+                        <div class="image-container">
+                          <% post.images.each do |image| %>
+                            <%= image_tag image.representation(resize_to_limit: [400, 400]), id: "oneImg",class:"img", :"data-postId" => post.id %>
+                          <% end %>
+                        </div>
+
+                          <%end%>
+                        <% else %>
+                          <%=video_tag url_for(post.images.first),controls: true,width: "400",height: "auto",id:"oneVideo" ,class:"img" ,:"data-postId"=>post.id%>
+                        <% end %>
+                      <%end%>
+                  </div>
+                  <div>
+                    <p>"<%=post.caption%>" Location: <%=post.location%></p>
+                  </div>
+                   <%if post.status=="shared"%>
+                              <%if !(post.shared.include?current_account.email)%>
+
+                                  <p class="mb-2">Post By:<%=post.shared%><span class="badge rounded-pill text-bg-success">Shared</span></p>
+
+                            <%else%>
+                                 <p>You Shared This Post</p>
+                            <%end%>
+                    <%end%>
+                  <%=link_to "Likes",post_likes_path(post),data:{turbo_frame: "likes"},class:"btn btn primary"%>
+                  <%=link_to "Comments",post_comments_path(post),data:{turbo_frame: "postComments"},class:"btn btn primary"%>
+                   <%if !(post.likes.find_by(email:current_account.email))%>
+                        <%= render partial: "likes/likes",locals:{my_post:post}%>
+                    <%else%>
+                        <%= render partial: "likes/unlike",locals:{my_post:post}%>
+                    <%end%>
+                  <%=link_to "Share",share_post_path(post),data:{turbo_method: :post},id:"commentBtn" ,class:"btn btn-primary"%>
+                  <%=link_to "Comment",new_post_comment_path(post),data:{turbo_frame: "comment"},id:"commentBtn" ,class:"btn btn-primary"%>
+                </div>
+              <%end%>
+            </div>
+          <%elsif @profile.status=="private_profile" && @has_followed==1%>
+              <div class="row">
+                <%@posts.each do |post|%>
+                <div class="col lg-3">
+                  <div class="eachImage">
+                    <%if post.images.attached?%>
+                        <%if  post.images.first.content_type.include?("image")%>
+                        <%if post.images.count>1%>
+                            <div id="Carousel<%=post.id%>" class="carousel slide" data-bs-ride="carousel">
+                            <!-- Wrapper for slides -->
+                            <div class="carousel-inner">
+                              <% post.images.each_with_index do |image, index| %>
+                                <div class="carousel-item <%= 'active' if index == 0 %>">
+                                  <%= image_tag image.representation(resize_to_limit: [400, 400]), id: "oneImg",class:"img" ,:"data-postId" => post.id ,alt: "Slide #{index + 1}"%>
+                                </div>
+                              <% end %>
+                            </div>
+
+                            <!-- Left and right controls -->
+                          <button class="carousel-control-prev" type="button" data-bs-target="#Carousel<%=post.id%>" data-bs-slide="prev">
+                              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                              <span class="visually-hidden">Previous</span>
+                            </button>
+                            <button class="carousel-control-next next" type="button" data-bs-target="#Carousel<%=post.id%>" data-bs-slide="next">
+                              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                              <span class="visually-hidden">Next</span>
+                            </button>
+                          </div>
+                          <%else%>
+
+                        <div class="image-container">
+                          <% post.images.each do |image| %>
+                            <%= image_tag image.representation(resize_to_limit: [400, 400]), id: "oneImg",class:"img", :"data-postId" => post.id %>
+                          <% end %>
+                        </div>
+
+                          <%end%>
+                        <% else %>
+                          <%=video_tag url_for(post.images.first),controls: true,width: "400",height: "auto",id:"oneVideo" ,class:"img" ,:"data-postId"=>post.id%>
+                        <% end %>
+                      <%end%>
+                  </div>
+                  <div>
+                    <p>"<%=post.caption%>" Location: <%=post.location%></p>
+                  </div>
+                   <%if post.status=="shared"%>
+                              <%if !(post.shared.include?current_account.email)%>
+
+                                  <p>Post By:<%=post.shared%><span class="badge rounded-pill text-bg-success">Shared</span></p>
+
+                            <%else%>
+                                 <p>You Shared This Post</p>
+                            <%end%>
+                    <%end%>
+                  <%=link_to "Likes",post_likes_path(post),data:{turbo_frame: "likes"},class:"btn btn primary"%>
+                  <%=link_to "Comments",post_comments_path(post),data:{turbo_frame: "postComments"},class:"btn btn primary"%>
+                   <%if !(post.likes.find_by(email:current_account.email))%>
+                        <%= render partial: "likes/likes",locals:{my_post:post}%>
+                    <%else%>
+                        <%= render partial: "likes/unlike",locals:{my_post:post}%>
+                    <%end%>
+                  <%=link_to "Share",share_post_path(post),data:{turbo_method: :post},id:"commentBtn" ,class:"btn btn-primary"%>
+                  <%=link_to "Comment",new_post_comment_path(post),data:{turbo_frame: "comment"},id:"commentBtn" ,class:"btn btn-primary"%>
+                </div>
+              <%end%>
+            </div>
+          <%else%>
+          <div id="message">
+              <h1><%=@message%></h1>
+          </div>
+        <% end %>
+  </div>
+</div>
+<style>
+  .post_img {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 50%;
+    float: right;
+    top:20px;
+  }
+  .main{
+    margin-top: 40px;
+  }
+  #info
+  {
+    margin-left: -15px;
+    margin-bottom: 50px;
+  }
+  #message
+  {
+    text-align: center;
+  }
+  .posts
+  {
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+  }
+  #oneVideo
+  {
+    margin: 10px;
+  }
+</style>

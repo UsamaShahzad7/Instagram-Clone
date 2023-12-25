@@ -1,0 +1,44 @@
+<div class="main">
+  <div class="container">
+    <h2>Set your Password</h2>
+
+      <div id="passwordSetup">
+        <%= form_for(:format, as: :account, url: account_password_path, html: { method: :PATCH }) do |f| %>
+        <%= hidden_field_tag :reset_password_token,params[:reset_password_token] %>
+        <%= hidden_field_tag :id,params[:format] %>
+        <div class="row">
+          <div class="field">
+         <div>
+           <%="Minimum Password Length: 6 characters"%>
+         </div>
+          <%= f.label :password, "New password" %>
+          <% if @minimum_password_length %>
+            <em>(<%= @minimum_password_length %> characters minimum)</em>
+          <% end %>
+          <%= f.password_field :password, autofocus: true, autocomplete: "new-password",class: 'form-control' %>
+        </div>
+        </div>
+
+       <div class="row">
+         <div class="field">
+          <%= f.label :password_confirmation, "Confirm new password" %>
+          <%= f.password_field :password_confirmation, autocomplete: "new-password",class: 'form-control'  %>
+        </div>
+       </div>
+
+       <div class="row">
+         <div class="actions">
+          <%= f.submit "Set password" ,class:"btn btn-primary" %>
+        </div>
+       </div>
+      <% end %>
+
+      </div>
+
+  </div>
+</div>
+<style>
+   .main{
+    margin-top: 40px;
+  }
+</style>

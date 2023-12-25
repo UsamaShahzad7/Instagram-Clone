@@ -1,0 +1,104 @@
+<div class="post" id="onePost-<%=post.id%>">
+  <div>
+    <%if post.images.attached?%>
+      <%if  post.images.first.content_type.include?("image")%>
+      <%if post.images.count>1%>
+          <div id="Carousel<%=post.id%>" class="carousel slide" data-bs-ride="carousel">
+          <!-- Wrapper for slides -->
+          <div class="carousel-inner">
+            <% post.images.each_with_index do |image, index| %>
+              <div class="carousel-item <%= 'active' if index == 0 %>">
+                 <%= image_tag image.representation(resize_to_limit: [400, 400]), id: "oneImg",class:"img" ,:"data-postId" => post.id ,alt: "Slide #{index + 1}"%>
+              </div>
+            <% end %>
+          </div>
+
+          <!-- Left and right controls -->
+         <button class="carousel-control-prev" type="button" data-bs-target="#Carousel<%=post.id%>" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+          </button>
+          <button class="carousel-control-next next" type="button" data-bs-target="#Carousel<%=post.id%>" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+          </button>
+        </div>
+        <%else%>
+
+      <div class="image-container">
+        <% post.images.each do |image| %>
+          <%= image_tag image.representation(resize_to_limit: [400, 400]), id: "oneImg",class:"img", :"data-postId" => post.id %>
+        <% end %>
+      </div>
+
+        <%end%>
+      <% else %>
+        <%=video_tag url_for(post.images.first),controls: true,width: "400",height: "auto",id:"oneVideo" ,class:"img" ,:"data-postId"=>post.id%>
+      <% end %>
+    <%end%>
+  </div>
+  <div>
+    <p>"<%=post.caption%>" Location: <%=post.location%></p>
+  </div>
+  <div>
+       <%if post.status=="shared"%>
+            <p>Post By:<%=post.shared%><span class="badge rounded-pill text-bg-success">Shared</span></p>
+        <%end%>
+      <%=link_to "Likes",post_likes_path(post),data:{turbo_frame: "likes"},class:"btn btn primary"%>
+      <%=link_to "Comments",post_comments_path(post),data:{turbo_frame: "postComments"},class:"btn btn primary"%>
+      <%=link_to "Archive Post",archive_post_post_path(post),data:{turbo_method: :get},class:"btn btn-outline-danger"%>
+  </div>
+</div>
+<style>
+  .post
+  {
+    padding: 20px;
+  }
+  .next
+  {
+    left: 300px;
+  }
+</style>
+<script>
+      //open a modal with edit and delete by clicking on any post
+      var myModal = document.getElementById('exampleModal')
+      a=document.getElementsByClassName("img")
+      myModal.hidden= true
+      Object.keys(a).forEach((x)=>{a[x].addEventListener('click',(e)=>{
+          myModal.hidden= false
+          b=a[x].dataset.postid
+          var token = document.getElementsByName('csrf-token')[0].content
+          const btn=document.getElementById("deleteBtn")
+          btn.addEventListener('click',()=>{
+            $.ajax({
+                  url: '/posts/destroy',
+                  method: 'DELETE',
+                  data: {post_id: b},
+                  headers: {
+                    'X-CSRF-Token': token,
+                  },
+                  success: function(data){
+
+                  }
+            })
+          })
+          const editBtn=document.getElementById("editBtn")
+          const editPost=document.getElementById("editPost")
+          editPost.hidden=true
+          editBtn.addEventListener('click',(e)=>{
+            editPost.hidden=false
+            editPost.click()
+            editPost.setAttribute("href","/posts/"+b+"/edit")
+          })
+      })})
+
+       $(document).ready(function() {
+        $('.carousel').carousel();
+        console.log("Carousel initialization script executed.");
+      });
+      // window.onclick = function(event) {
+      //     if (event.target.id != "exampleModal" && event.target.id != "oneImg" && event.target.id != "editBtn") {
+      //           myModal.hidden= true
+      //     }
+      //   }
+  </script>

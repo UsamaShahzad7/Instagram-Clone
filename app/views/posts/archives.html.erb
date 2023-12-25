@@ -1,0 +1,68 @@
+<div class="main">
+  <div class="container">
+    <h1>ARCHIVES</h1>
+    <div>
+        <%@archives.each do |post|%>
+            <div id="archives">
+                <%=link_to "#{@current_profile.user_name}",profile_path(@current_profile.id),class:"btn btn primary"%>
+               <%if post.images.attached?%>
+                    <%if  post.images.first.content_type.include?("image")%>
+                    <%if post.images.count>1%>
+                        <div id="Carousel<%=post.id%>" class="carousel slide" data-bs-ride="carousel">
+                        <!-- Wrapper for slides -->
+                        <div class="carousel-inner">
+                          <% post.images.each_with_index do |image, index| %>
+                            <div class="carousel-item <%= 'active' if index == 0 %>">
+                              <%= image_tag image.representation(resize_to_limit: [400, 400]), id: "oneImg",class:"img" ,:"data-postId" => post.id ,alt: "Slide #{index + 1}"%>
+                            </div>
+                          <% end %>
+                        </div>
+
+                        <!-- Left and right controls -->
+                      <button class="carousel-control-prev" type="button" data-bs-target="#Carousel<%=post.id%>" data-bs-slide="prev">
+                          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                          <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next next" type="button" data-bs-target="#Carousel<%=post.id%>" data-bs-slide="next">
+                          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                          <span class="visually-hidden">Next</span>
+                        </button>
+                      </div>
+                      <%else%>
+
+                    <div class="image-container">
+                      <% post.images.each do |image| %>
+                        <%= image_tag image.representation(resize_to_limit: [400, 400]), id: "oneImg",class:"img", :"data-postId" => post.id %>
+                      <% end %>
+                    </div>
+
+                      <%end%>
+                    <% else %>
+                      <%=video_tag url_for(post.images.first),controls: true,width: "400",height: "auto",id:"oneVideo" ,class:"img" ,:"data-postId"=>post.id%>
+                    <% end %>
+                  <%end%>
+                <%=post.caption%>
+                <%=post.location%>
+               <%=link_to "Un Archive",un_archive_post_post_path(post),data:{turbo_method: :get},class:"btn btn-outline-success"%>
+            </div>
+          <%end%>
+        </div>
+  </div>
+</div>
+<style>
+  .post_img {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 50%;
+    float: right;
+    top:20px;
+  }
+  #archives
+  {
+    padding: 20px;
+  }
+  .main{
+    margin-top: 40px;
+  }
+</style>
